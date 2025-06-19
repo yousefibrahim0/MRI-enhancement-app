@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuraScan - Advanced MRI Enhancement</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="shortcut icon" href="/static/favicon.ico">
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --background: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #343a40;
+            --text-light: #6c757d;
+            --success: #38b000;
+            --error: #d90429;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background);
+            overflow-x: hidden;
+        }
+
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.05;
+            filter: blur(40px);
+        }
+
+        .shape-1 {
+            top: -150px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            border-radius: 49% 51% 70% 30% / 30% 30% 70% 70%;
+            background: var(--primary);
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            bottom: -150px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            background: var(--secondary);
+            animation: float 20s ease-in-out infinite reverse;
+        }
+
+        .shape-3 {
+            top: 40%;
+            left: 20%;
+            width: 200px;
+            height: 200px;
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            background: var(--primary-dark);
+            animation: float 25s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            33% {
+                transform: translate(50px, -50px) rotate(120deg) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg) scale(0.9);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg) scale(1);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            /* Cross-browser gradient text solution */
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -moz-background-clip: text;
+            color: transparent;
+            /* Fallback for browsers that don't support background-clip: text */
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .brain-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .card {
+            border-radius: 16px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .upload-section {
+            padding: 40px;
+            border: 2px dashed #d1d5db;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #f9fafb, #f3f4f6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-section::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(247, 37, 133, 0.05) 100%);
+            z-index: -1;
+        }
+
+        .upload-section.drag-over {
+            transform: scale(1.01);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+            background: linear-gradient(145deg, #f0f7ff, #eef2ff);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .upload-section:hover .upload-icon {
+            transform: translateY(-5px);
+        }
+
+        .upload-text {
+            margin-bottom: 20px;
+            color: var(--text-light);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .file-info.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .file-info i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        .error-message {
+            margin: 20px auto;
+            padding: 15px;
+            background-color: rgba(217, 4, 41, 0.1);
+            border-left: 4px solid var(--error);
+            border-radius: 8px;
+            color: var(--error);
+            font-weight: 500;
+            text-align: left;
+            max-width: 600px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: none;
+            margin: 40px auto;
+            text-align: center;
+        }
+
+        .loader {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader:after {
+            content: '';
+            display: block;
+            border-radius: 50%;
+            width: 0;
+            height: 0;
+            margin: 8px;
+            box-sizing: border-box;
+            border: 32px solid var(--primary);
+            border-color: var(--primary) transparent var(--primary) transparent;
+            animation: spin 1.2s infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0);
+                animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+            }
+            50% {
+                transform: rotate(180deg);
+                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-weight: 500;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .loading-info {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .results-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .image-container {
+            flex: 1;
+            min-width: calc(50% - 15px);
+            border-radius: 16px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .image-container.show {
+            opacity: 1;
+            transform: translateY(0);
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        .image-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .image-header {
+            padding: 20px;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .image-title {
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .image-title i {
+            font-size: 1.4rem;
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .image-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .image-body {
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .image-body img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .image-body:hover img {
+            transform: scale(1.02);
+        }
+
+        #original-image,
+        #enhanced-image {
+            display: none;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .actions {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .info-box {
+            background-color: rgba(67, 97, 238, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            display: flex;
+            align-items: center;
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .info-box h3 i {
+            margin-right: 10px;
+        }
+
+        .info-box p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .results-section {
+                flex-direction: column;
+            }
+
+            .image-container {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="brain-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h1>YEMMOScan Advanced MRI Enhancement</h1>
+            <p class="subtitle">Enhance your medical imaging data with our state-of-the-art U-Net deep learning model for clearer diagnosis and analysis</p>
+        </header>
+
+        <div class="upload-section" id="drop-area">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <p class="upload-text">Drag and drop your .npy file here or use the button below</p>
+            <input type="file" id="file-input" accept=".npy" />
+            <button class="btn btn-primary" id="upload-btn">
+                <i class="fas fa-file-medical"></i>
+                Select MRI Data File
+            </button>
+            <div class="file-info" id="file-info">
+                <i class="fas fa-file-code"></i>
+                <span id="file-name">No file selected</span>
+            </div>
+        </div>
+        
+        <div class="error-message" id="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="error-text"></span>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="loader"></div>
+            <p class="loading-text">Processing your MRI data...</p>
+            <p class="loading-info">Our AI model is analyzing and enhancing your image. This usually takes about 10-15 seconds.</p>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i>About this tool</h3>
+            <p>This application uses a deep learning U-Net architecture to enhance MRI images by reducing noise and improving contrast. Upload a NumPy (.npy) file containing MRI data to see the difference between the original and enhanced results.</p>
+        </div>
+        
+        <div class="results-section" id="results-section">
+            <div class="image-container" id="original-container">
+                <div class="image-header">
+                    <div class="image-title">
+                        <i class="fas fa-image"></i>
+                        Original MRI Image
+                    </div>
+                    <div class="image-description">Raw input data before enhancement</div>
+                </div>
+                <div class="image-body">
+                    <img id="original-image" src="" alt="Original MRI Image">
+                    <div class="image-overlay" id="original-overlay">Original</div>
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <div class="stat-label">Resolution</div>
+                            <div class="stat-value" id="original-resolution">-</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Signal-to-Noise</div>
+                            <div class="stat-value" id="original-snr">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="image-container" id="enhanced-container">
+                <div class="image-header">
+                    <div class="image-title">
+                        <i class="fas fa-magic"></i>
+                        Enhanced MRI Image
+                    </div>
+                    <div class="image-description">AI-processed output with improved clarity</div>
+                </div>
+                <div class="image-body">
+                    <img id="enhanced-image" src="" alt="Enhanced MRI Image">
+                    <div class="image-overlay" id="enhanced-overlay">Enhanced</div>
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <div class="stat-label">Resolution</div>
+                            <div class="stat-value" id="enhanced-resolution">-</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Signal-to-Noise</div>
+                            <div class="stat-value" id="enhanced-snr">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions" id="action-buttons" style="display: none;">
+            <button class="btn btn-primary" id="download-btn">
+                <i class="fas fa-download"></i>
+                Download Results
+            </button>
+            <button class="btn btn-primary" id="process-new-btn">
+                <i class="fas fa-sync-alt"></i>
+                Process New Image
+            </button>
+        </div>
+
+        <footer>
+            <p>© 2025 NeuraScan MRI Enhancement Tool | Powered by Advanced Neural Networks</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM elements
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const fileInfo = document.getElementById('file-info');
+        const fileName = document.getElementById('file-name');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const originalImage = document.getElementById('original-image');
+        const enhancedImage = document.getElementById('enhanced-image');
+        const originalContainer = document.getElementById('original-container');
+        const enhancedContainer = document.getElementById('enhanced-container');
+        const originalOverlay = document.getElementById('original-overlay');
+        const enhancedOverlay = document.getElementById('enhanced-overlay');
+        const actionButtons = document.getElementById('action-buttons');
+        const downloadBtn = document.getElementById('download-btn');
+        const processNewBtn = document.getElementById('process-new-btn');
+        const originalResolution = document.getElementById('original-resolution');
+        const enhancedResolution = document.getElementById('enhanced-resolution');
+        const originalSnr = document.getElementById('original-snr');
+        const enhancedSnr = document.getElementById('enhanced-snr');
+        let enhancedBase64 = '';
+
+        // Hide containers initially
+        originalContainer.style.display = 'none';
+        enhancedContainer.style.display = 'none';
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop area when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('drag-over');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('drag-over');
+        }
+
+        // Handle dropped files
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Handle selected files
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                
+                // Check if file is .npy
+                if (!file.name.endsWith('.npy')) {
+                    showError('Please upload a valid .npy file containing MRI data');
+                    return;
+                }
+                
+                // Show file info
+                fileName.textContent = file.name;
+                fileInfo.classList.add('show');
+                
+                // Reset any previous errors
+                hideError();
+                
+                // Create FormData and append file
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                // Show loading indicator
+                loading.style.display = 'block';
+                originalContainer.style.display = 'none';
+                enhancedContainer.style.display = 'none';
+                actionButtons.style.display = 'none';
+                
+                // Simulate API call with timeout (replace with actual fetch in production)
+                uploadAndEnhance(formData);
+            }
+        }
+
+        async function uploadAndEnhance(formData) {
+            try {
+                const response = await fetch('/api/enhance', {
+                method: 'POST',
+                body: formData
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to enhance the image');
+                }
+                const data = await response.json();
+                processResults(data);  // نفس الفنكشن بتاعت العرض
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to enhance the image. Please try again.');
+                loading.style.display = 'none';
+            }
+        }
+
+        function processResults(data) {
+            loading.style.display = 'none';
+            
+            // Display images with animation delay
+            originalContainer.style.display = 'block';
+            enhancedContainer.style.display = 'block';
+            
+            // Set stats if available
+            if (data.stats) {
+                originalResolution.textContent = data.stats.original.resolution;
+                originalSnr.textContent = data.stats.original.snr;
+                enhancedResolution.textContent = data.stats.enhanced.resolution;
+                enhancedSnr.textContent = data.stats.enhanced.snr;
+            } else {
+                // Set default values
+                originalResolution.textContent = '256×256';
+                originalSnr.textContent = '~15 dB';
+                enhancedResolution.textContent = '256×256';
+                enhancedSnr.textContent = '~22 dB';
+            }
+            
+            // For demonstration - set placeholder images
+            originalImage.src = 'data:image/png;base64,'+ data.original_image;
+            enhancedImage.src = 'data:image/png;base64,'+ data.enhanced_image;
+
+            // هنا بنخزن الـ base64
+            enhancedBase64 = data.enhanced_image;
+            
+            // Show images with animation
+            setTimeout(() => {
+                originalImage.style.display = 'block';
+                originalOverlay.style.display = 'block';
+                originalContainer.classList.add('show');
+            }, 300);
+            
+            setTimeout(() => {
+                enhancedImage.style.display = 'block';
+                enhancedOverlay.style.display = 'block';
+                enhancedContainer.classList.add('show');
+                actionButtons.style.display = 'flex';
+            }, 600);
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        // Action buttons
+        downloadBtn.addEventListener('click', function() {
+            if (enhancedBase64) {
+                const link = document.createElement('a');
+                link.href = 'data:image/png;base64,' + enhancedBase64;
+                link.download = 'enhanced_mri_image.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert('No enhanced image available to download.');
+            }
+        });
+
+        processNewBtn.addEventListener('click', function() {
+            // Reset UI for new processing
+            fileInfo.classList.remove('show');
+            originalContainer.style.display = 'none';
+            enhancedContainer.style.display = 'none';
+            originalContainer.classList.remove('show');
+            enhancedContainer.classList.remove('show');
+            actionButtons.style.display = 'none';
+            hideError();
+            
+            // Clear file input
+            fileInput.value = '';
+            fileName.textContent = 'No file selected';
+        });
+    </script>
+</body>
+</html>
