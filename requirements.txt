@@ -1,13 +1,10 @@
 # Simple requirements.txt - using standard PyPI versions
-
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
-
-# PyTorch CPU-only (much smaller, less memory)
-torch==2.1.0
-torchvision==0.16.0
-
+# PyTorch CPU-only (updated to available version)
+torch==2.5.1
+torchvision==0.20.1
 # Core dependencies
 Pillow==10.0.1
 numpy==1.24.3
