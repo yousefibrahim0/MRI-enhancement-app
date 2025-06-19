@@ -1,13 +1,22 @@
-# Simple requirements.txt - using flexible versions to avoid build issues
+# Deployment requirements.txt
+# Install these first
+pip>=23.0
+setuptools>=68.0
+wheel>=0.40.0
+
+# Web framework
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 python-multipart>=0.0.6
-# PyTorch CPU-only - install separately with official index
-# torch>=2.5.0
-# torchvision>=0.21.0
-# Core dependencies
-Pillow>=10.0.0
+
+# Core dependencies (install before PyTorch)
 numpy>=1.24.0
+Pillow>=10.0.0
 requests>=2.31.0
 gdown>=4.7.0
 scipy>=1.11.0
+
+# PyTorch - CPU only for deployment
+--index-url https://download.pytorch.org/whl/cpu
+torch>=2.5.0
+torchvision>=0.21.0
