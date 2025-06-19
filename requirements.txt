@@ -1,13 +1,13 @@
-# Simple requirements.txt - using standard PyPI versions
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-python-multipart==0.0.6
-# PyTorch CPU-only (updated to available versions)
-torch==2.5.1
-torchvision==0.21.0
+# Simple requirements.txt - using flexible versions to avoid build issues
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+# PyTorch CPU-only - install separately with official index
+# torch>=2.5.0
+# torchvision>=0.21.0
 # Core dependencies
-Pillow==10.0.1
-numpy==1.24.3
-requests==2.31.0
-gdown==4.7.1
-scipy==1.11.4
+Pillow>=10.0.0
+numpy>=1.24.0
+requests>=2.31.0
+gdown>=4.7.0
+scipy>=1.11.0
