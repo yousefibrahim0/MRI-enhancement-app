@@ -6,6 +6,7 @@ Pillow
 requests
 gdown
 scipy
---index-url https://download.pytorch.org/whl/cpu
-torch
-torchvision
+
+# نثبّت torch و torchvision من فهرس PyTorch
+torch==2.5.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+torchvision==0.21.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
