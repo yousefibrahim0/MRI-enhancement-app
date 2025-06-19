@@ -1,22 +1,11 @@
-# Deployment requirements.txt
-# Install these first
-pip>=23.0
-setuptools>=68.0
-wheel>=0.40.0
-
-# Web framework
-fastapi>=0.104.0
-uvicorn[standard]>=0.24.0
-python-multipart>=0.0.6
-
-# Core dependencies (install before PyTorch)
-numpy>=1.24.0
-Pillow>=10.0.0
-requests>=2.31.0
-gdown>=4.7.0
-scipy>=1.11.0
-
-# PyTorch - CPU only for deployment
+fastapi
+uvicorn[standard]
+python-multipart
+numpy
+Pillow
+requests
+gdown
+scipy
 --index-url https://download.pytorch.org/whl/cpu
-torch>=2.5.0
-torchvision>=0.21.0
+torch
+torchvision
