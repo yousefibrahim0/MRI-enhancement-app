@@ -1,26 +1,16 @@
-# Fixed requirements.txt with compatible PyTorch versions
+# Simple requirements.txt - using standard PyPI versions
 
-# Core FastAPI dependencies
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
 
-# PyTorch - CPU version for lower memory usage
-torch==2.1.0+cpu --find-links https://download.pytorch.org/whl/torch_stable.html
-torchvision==0.16.0+cpu --find-links https://download.pytorch.org/whl/torch_stable.html
+# PyTorch CPU-only (much smaller, less memory)
+torch==2.1.0
+torchvision==0.16.0
 
-# Image processing
+# Core dependencies
 Pillow==10.0.1
 numpy==1.24.3
-
-# HTTP requests
 requests==2.31.0
-
-# File download
 gdown==4.7.1
-
-# Scientific computing
 scipy==1.11.4
-
-# CORS middleware (usually included with FastAPI but explicit is better)
-python-cors==1.7.0
