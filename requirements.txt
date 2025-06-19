@@ -2,9 +2,9 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
-# PyTorch CPU-only (updated to available version)
+# PyTorch CPU-only (updated to available versions)
 torch==2.5.1
-torchvision==0.20.1
+torchvision==0.21.0
 # Core dependencies
 Pillow==10.0.1
 numpy==1.24.3
